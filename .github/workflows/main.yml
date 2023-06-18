@@ -13,8 +13,19 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '18'
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
       - name: npm install
         env:
           CI: true
         run: 
           npm ci
+      - run: |
+          zip -r deploy.zip ./app.js
+          aws lambda update-function-code --function-name=project-beta --zip-file=fileb://deploy.zip
+
+      
