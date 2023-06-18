@@ -1,14 +1,17 @@
-const Serverless = require("serverless-http");
+const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
 const port = 3000;
 
 app.get("/hello", (req, res) => {
-	res.send("Hello World");
+	res.status(200).json({
+		message: "success",
+		data: "hello world"
+	})
 });
 
 /* app.listen(port, () => {
 	console.log("App running on port: ", port);
 });
  */
-module.exports.handler = Serverless(app);
+module.exports.handler = serverless(app);
