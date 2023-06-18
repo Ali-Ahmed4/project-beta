@@ -4,7 +4,7 @@ const app = express();
 const port = 3000;
 
 app.get("/", (req, res) => {
-	res.status(200).json({
+	return res.status(200).json({
 		message: "success",
 		data: "hello world"
 	})
