@@ -5,6 +5,22 @@ on:
     branches:
     - master
 
+Resources:
+  BetaFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: /
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      Events:
+        Beta:
+          Type: Api 
+          Properties:
+            Path: /{proxy+}
+            Method: any
+
 jobs:
   deploy_lambda:
     runs-on: ubuntu-latest
