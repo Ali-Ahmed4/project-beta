@@ -5,21 +5,7 @@ on:
     branches:
     - master
 
-Resources:
-  BetaFunction:
-    Type: AWS::Serverless::Function 
-    Properties:
-      CodeUri: /
-      Handler: app.lambdaHandler
-      Runtime: nodejs18.x
-      Architectures:
-        - x86_64
-      Events:
-        Beta:
-          Type: Api 
-          Properties:
-            Path: /{proxy+}
-            Method: any
+
 
 jobs:
   deploy_lambda:
@@ -29,19 +15,28 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '18'
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1 
+    #  - name: Configure AWS Credentials
+    #    uses: aws-actions/configure-aws-credentials@v2
+    #    with:
+    #      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #      aws-region: ap-south-1 
       - name: npm install
         env:
           CI: true
         run: 
           npm ci
-      - run: |
-          zip -r deploy.zip ./app.js
-          aws lambda update-function-code --function-name=project-beta --zip-file=fileb://deploy.zip
+      - name: serverless deploy
+        uses: serverless/github-action@master
+        with:
+          args: deploy
+        env:
+          #SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          # or if using AWS credentials directly
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+     # - run: |
+      #    zip -r deploy.zip ./app.js
+      #    aws lambda update-function-code --function-name=project-beta --zip-file=fileb://deploy.zip
 
       
